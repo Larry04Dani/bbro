@@ -1,65 +1,90 @@
-import Image from "next/image";
+// src/app/page.js
+import prisma from '@/lib/db';
+import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const proprietari = await prisma.proprietario.findMany({
+    include: { immobili: true },
+    orderBy: { createdAt: 'desc' }
+  });
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    // SFONDO PANNA
+    <main className="min-h-screen bg-bbro-background p-10">
+      
+      {/* INTESTAZIONE */}
+      <div className="flex justify-between items-center mb-12 border-b border-bbro-element-light/30 pb-6">
+        <div>
+            {/* TITOLO SCURO */}
+            <h1 className="text-4xl font-bold text-bbro-element-dark tracking-tight">B Brothers Rome</h1>
+            {/* SOTTOTITOLO MARRONE MEDIO */}
+            <p className="text-bbro-foreground mt-2 font-light">Pannello di gestione proprietà</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        
+        {/* BOTTONE ORO */}
+        <Link 
+          href="/nuovo" 
+          className="bg-bbro-element-light text-white px-6 py-3 rounded-sm uppercase tracking-wider text-xs font-bold hover:bg-bbro-element-dark transition shadow-sm"
+        >
+          + Nuovo Proprietario
+        </Link>
+      </div>
+
+      {/* LISTA PROPRIETARI */}
+      {proprietari.length === 0 ? (
+        <div className="text-center mt-20">
+          <p className="text-xl text-bbro-element-dark font-medium">Nessun proprietario trovato.</p>
+          <p className="mt-2 text-sm text-bbro-foreground">Clicca il tasto oro in alto per iniziare.</p>
         </div>
-      </main>
-    </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          
+          {proprietari.map((p) => (
+            <Link key={p.id} href={`/proprietari/${p.id}`} className="block group">
+                
+                <div className="bg-white rounded-sm shadow-sm border border-bbro-element-light/20 overflow-hidden group-hover:shadow-md group-hover:border-bbro-element-light transition cursor-pointer h-full flex flex-col">
+                  
+                  {/* Testata Card: SFONDO SCURO (#241d16) */}
+                  <div className="bg-bbro-element-dark p-4 border-b border-bbro-element-light/50 group-hover:bg-black transition">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-lg font-semibold text-white tracking-wide">{p.nome} {p.cognome}</h2>
+                        {/* SCRITTA ORO */}
+                        <span className="text-bbro-element-light opacity-0 group-hover:opacity-100 text-xs font-bold transition tracking-widest">APRI</span>
+                    </div>
+                  </div>
+
+                  {/* Corpo */}
+                  <div className="p-5 flex-grow">
+                    <h3 className="text-[10px] font-bold uppercase text-bbro-element-light tracking-widest mb-4">Proprietà</h3>
+                    
+                    {p.immobili.length > 0 ? (
+                      <div className="space-y-3">
+                        {p.immobili.map((casa) => (
+                            <div key={casa.id} className="flex items-start">
+                              <span className="text-bbro-element-light mr-2 text-lg leading-none">•</span>
+                              <div>
+                                <p className="text-bbro-foreground font-bold text-sm leading-tight">{casa.indirizzo}</p>
+                                <p className="text-xs text-bbro-foreground/70 mt-0.5">{casa.zona}</p>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-bbro-foreground/50 italic">Nessun immobile associato.</p>
+                    )}
+                  </div>
+
+                  {/* Footerino */}
+                  <div className="bg-bbro-background px-5 py-3 border-t border-bbro-element-light/10 flex justify-between items-center">
+                      <span className="text-[10px] uppercase text-bbro-foreground/60 tracking-wider font-bold">ID: {p.id}</span>
+                  </div>
+
+                </div>
+            </Link>
+          ))}
+
+        </div>
+      )}
+    </main>
   );
 }

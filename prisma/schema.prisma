@@ -1,0 +1,50 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Proprietario {
+  id              Int      @id @default(autoincrement())
+  nome            String
+  cognome         String
+  telefono        String?
+  emailPersonale  String?
+  docIdentita     String? 
+
+  // Credenziali Generate
+  googleEmail     String?
+  googlePass      String?
+  bookingUser     String?
+  bookingPass     String?
+  airbnbUser      String?
+  airbnbPass      String?
+  ciaoBookingUser String?
+  ciaoBookingPass String?
+
+  // Relazione: Un proprietario ha molte case
+  immobili        Immobile[]
+  
+  createdAt       DateTime @default(now())
+}
+
+model Immobile {
+  id              Int          @id @default(autoincrement())
+  indirizzo       String
+  zona            String      // Ho rinominato 'citta' in 'zona'
+  
+  // NUOVI CAMPI (Opzionali per ora)
+  metriQuadri     Int?
+  postiLetto      Int?
+  postiLettoExtra Int?
+  camere          Int?
+  bagni           Int?
+
+  proprietarioId  Int
+  proprietario    Proprietario @relation(fields: [proprietarioId], references: [id])
+}
