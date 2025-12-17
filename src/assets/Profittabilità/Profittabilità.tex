@@ -1,0 +1,343 @@
+
+\documentclass[10pt,a4paper,withhypeper,normalphoto]{altacv}
+\geometry{left=1.25cm,right=1.25cm,top=1.5cm,bottom=0.5cm,columnsep=1.2cm}
+
+
+
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[table]{xcolor}
+\newmdenv[
+  backgroundcolor=blue!10, 
+  linecolor=blue!80!black, 
+  linewidth=2pt,            
+  roundcorner=10pt          
+]{sectionbox}
+
+\usepackage{paracol}
+\iftutex
+  \setmainfont{Lato}
+\else
+  \usepackage[default]{lato}
+\fi
+
+\definecolor{Gold}{HTML}{ab7244}
+\definecolor{SlateGrey}{HTML}{2E2E2E}
+\definecolor{LightGrey}{HTML}{666666}
+
+\definecolor{high}{HTML}{C18E66}
+\definecolor{medium}{HTML}{DDAC8B}
+\definecolor{low}{HTML}{F2D7CB}
+\definecolor{high_}{HTML}{F6CFB0}
+\definecolor{medium_}{HTML}{FFDAC1}
+\definecolor{low_}{HTML}{FFECE3}
+
+\definecolor{azzurro}{HTML}{007EDD}
+
+\colorlet{heading}{Gold}
+\colorlet{headingrule}{Gold}
+\colorlet{accent}{Gold}
+\colorlet{emphasis}{SlateGrey}
+\colorlet{body}{LightGrey}
+
+
+\renewcommand{\cvItemMarker}{{\small\textbullet}}
+\renewcommand{\cvRatingMarker}{\faCircle}
+
+
+
+\begin{document}
+\sloppy
+\name{relazione di profittabilità}
+\tagline{ {{INDIRIZZO}} - {{ZONA}} }
+\photoR{3.5cm}{logo-trasparente}
+\personalinfo{
+  \email{info@bbrothersrome.it}
+  \phone{+39-334-507-1226}
+  \homepage{bbrothersrome.it}
+}
+
+\makecvheader
+
+\AtBeginEnvironment{itemize}{\small}
+
+\columnratio{0.6}
+
+\begin{paracol}{2}
+
+\cvsection{Stato immobile}
+
+\cvevent{Tipologia e spazi}{}{}{}
+{{TAGLI}}
+
+\divider
+
+\cvevent{Ubicazione}{{{ZONA}}}{}{{{INDIRIZZO}}}
+
+\divider
+
+\cvevent{Facilities e servizi}{}{}{}
+{{FACILITIES}}
+
+
+\divider
+
+\cvevent{Grandezza/posti letto attuale}{}{}{}
+
+\begin{itemize}
+\item base: {{POSTI_LETTO}}
+\item extra: {{POSTI_LETTO_EXTRA}}
+\end{itemize}
+
+\cvsection{Suggerimenti ORIENTATIVI per interventi, modifiche e migliorie }
+
+\cvevent{Modifiche strutturali}{}{}{}
+{{MODIFICHE_STRUTTURALI}}
+
+\divider
+
+\cvevent{Migliorie mobiliari}{}{}{}
+{{MIGLIORIE_IMMOBILIARI}}
+
+\divider
+
+\newpage
+
+
+
+
+
+
+
+
+\cvsection{dati utilizzati per la stima}
+
+\cvevent{Parametri di ricerca}{}{}{}
+\begin{itemize}
+\item \textbf{Camere disponibili: {{CAMERE_DISPONIBILI}} }
+\item \textbf{Bagni: {{BAGNI_ANALISI}}}
+\item \textbf{Posizionamento: {{POSIZIONAMENTO}}}
+\item \textbf{Posti letto totali: {{POSTI_LETTO_TOTALI}}}
+\end{itemize}
+
+\cvevent{considerazioni}{}{}{}
+{{CONSIDERAZIONI}}
+
+
+\cvsection {Analisi di Profittabilità Come Alloggio Turistico Intero}
+Considerando le caratteristiche, la qualità e il contesto esclusivo in cui si trova l'immobile, unito alla sua posizione strategica: a due passi dal foro italico, dallo stadio olimpico e dall'ospedale gemelli si può stimare un pricing (applicabile a regime, quindi considerabile dopo almeno 3/6 mesi di attività, e da gestire sempre dinamicamente) come da seguente tabella:  
+\begin{table}[h!]
+\centering
+
+\begin{tabular}{|c|p{4.5cm}|p{1cm}|p{1cm}|p{1cm}|}
+\hline
+    \rowcolor{Gold} 
+    \textcolor{white}{\textbf{Stagione}} &
+    \textbf{   } &
+    \textcolor{white}{\textbf{Prezzo notte}} & 
+    \textcolor{white}{\textbf{Base Pax}} & 
+    \textcolor{white}{\textbf{extra Pax (+2)}}\\ 
+\hline
+    \rowcolor{high_} \cellcolor{high} Alta & 01/maggio-31/luglio \break 01/settembre-31/ottobre \break 21/dicembre - 06/gennaio   & {{PREZZO_ALTA}} & {{POSTI_LETTO}} & {{EXTRA_PAX}}  \\ 
+\hline
+    \rowcolor{medium_} \cellcolor{medium} Media & 01/aprile-30/aprile \break 01/agosto-31/agosto & {{PREZZO_MEDIA}} & {{POSTI_LETTO}} & {{EXTRA_PAX}} \\ 
+\hline
+    \rowcolor{low_} \cellcolor{low} Bassa & 07/gennaio-31/marzo \break 01/novembre-20/dicembre & {{PREZZO_BASSA}} & {{POSTI_LETTO}} & {{EXTRA_PAX}} \\ 
+\hline
+\end{tabular}
+\label{tab:example}
+\end{table}
+
+
+
+
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|>{\columncolor{high_}}c|>{\columncolor{high_}}p{1.5cm}|>{\columncolor{medium_}}c|>{\columncolor{medium_}}p{1.5cm}|>{\columncolor{low_}}c|>{\columncolor{low_}}p{1.5cm}|}
+\hline
+\multicolumn{2}{|>{\columncolor{high}}c|}{\textbf{Alta}} & 
+\multicolumn{2}{|>{\columncolor{medium}}c|}{\textbf{Media}} & 
+\multicolumn{2}{|>{\columncolor{low}}c|}{\textbf{Bassa}} \\ 
+\hline
+GG Totali & Occup. stimata & GG Totali & Occup. stimata & GG Totali & Occup. stimata \\ 
+\hline
+170 & {{DAYS_ALTA}} & 61 & {{DAYS_MEDIA}} & 134 & {{DAYS_BASSA}} \\ 
+\hline
+Rate (\%) & {{PERC_ALTA}}\% & Rate (\%) & {{PERC_MEDIA}}\% & Rate (\%) & {{PERC_BASSA}}\% \\ 
+\hline
+\multicolumn{2}{|>{\columncolor{medium}}c|}{\textbf{Totale annuo: 365}} & 
+\multicolumn{2}{|>{\columncolor{medium}}c|}{\textbf{Occup. totale : {{TOTAL_DAYS}}}} & 
+\multicolumn{2}{|>{\columncolor{medium}}c|}{\textbf{Occup. media: {{AVG_OCCUPANCY}}\%}} \\ 
+\hline
+\end{tabular}
+\end{table}
+
+
+
+
+\newpage
+
+
+
+\switchcolumn
+
+\cvsection{Introduzione}
+\begin{quote}
+Per valutare il potenziale di profittabilità del suo immobile in Roma abbiamo condotto un’analisi preliminare basata sugli annunci attivi delle OTA in zona e su stime immobiliari generali.
+
+\end{quote}
+
+\cvsection{Setup iniziale}
+
+\cvachievement{\faTrophy}{Tipologia “Casa Vacanze” (assimilabile anche a B\&B ed Affittacamere) }{}
+\begin{itemize}
+    \item \ Verifica ed analisi documentale di fattibilità Catastale, \textbf{con produzione della Relazione Asseverata} sulla Casa da parte di Tecnico autorizzato (Arch., Ing., Geom.), costo circa \textbf{€800}
+    \item \textbf{Presentazione della S.C.I.A.} (Segnalazione Certificata di Inizio Attività) presso il Comune, in via telematica allo Sportello Unico per le Attività Ricettive (DPR 28/12/2000, n. 445), costo \textbf{€100}
+    \item \textbf{Diritti Comunali di istruttoria} per strutture ricettive entro i mq. 250, costo \textbf{€250}
+\end{itemize}
+\divider
+
+
+\cvachievement{\faTrophy}{Tipologia “Alloggio Turistico” \break\textcolor{Gold}{(Tipologia prevista)} }{}
+
+
+
+
+\begin{itemize}
+    \item \textbf{Presentazione Comunicazione di Inizio Attività (CIA)} a Comune di Roma e Regione Lazio (via PEC), costo (esclusa attivazione SPID per accesso alla Pubblica Amministrazione, se richiesto) costo \textbf{€150} incluso nella Onboarding Fee nel caso di mandato Full Service 
+    \item \textbf{Diritti Comunali} – Reversale CIA: da pagare online/SPID, costo \textbf{€50} (IVA inclusa, commiss. Carta €1,50 esclusa) 
+
+\end{itemize}
+\divider
+
+
+\cvachievement{\faTrophy}{Per entrambe le tipologie }{}
+\begin{itemize}
+    \item Polizza Assicurativa per Responsabilità Civile specifico per CAV/B\&B: premio per il primo anno al costo di circa € 200 (variabile proporzionalmente in base alla estensione della proprietà ed alla copertura richiesta/massimali) 
+
+    \item Servizio fotografico professionale (20/25 foto) degli ambienti della casa. 
+    
+    {\fontsize{7}{16}\selectfont Eventuali costi variabili per interventi strutturali necessari, o migliorie mobiliari o aggiunta di servizi e forniture suggeriti rimangono a carico dei proprietari, come anche i costi vivi di tasse ed utenze}
+\end{itemize}
+
+
+
+\newpage
+
+\cvsection{I vantaggi della gestione integrata B\&Brother}
+
+
+\begin{mdframed}[backgroundcolor=Gold]
+    \begin{itemize}
+        \item La casa sarà sempre ed immediatamente libera e disponibile per il Proprietario, per brevi periodi o per la vendita (ad esempio). 
+        \item L’Affitto Breve non presenta rischi di occupazione abusiva o morosità. 
+        \item I profitti da gestione in Affitto Breve sono normalmente piu’ alti di quelli per Affitti Standard, perche’ si affitta per notte e non per periodi mensili, quindi si aumenta l’incasso totale del mese frammentandolo. 
+
+
+        \item La casa e’ sempre pulita, manutenuta e funzionante al 100\%, e’ una casa attiva e non ferma, e soprattutto sempre produttiva. 
+
+
+        \item La gestione B\&Brother abbraccia diversi gradi di coinvolgimento del Proprietario in base alla sua volontà: puo’ essere coinvolto in tutti i processi di gestione oppure puo’ seguire “da lontano”, se vuole, e ricevere mensilmente i ricavi lasciando a noi tutta la libertà di gestione. 
+
+
+        \item Infine, la gestione B\&Brother e’ assolutamente trasparente, chiara e precisa: il Proprietario puo’ intervenire o chiedere chiarimenti quando vuole, per controllo o modifica dati e/o operativo. 
+
+    \end{itemize}
+\end{mdframed}
+
+\cvsection{ costi di gestione B\&Brother }
+
+
+
+\begin{itemize}
+    \item Onboarding Fee annuale per servizio di ritenuta di imposta prevista dal Property Managment: 200€ 
+
+    \item Creazione e pubblicazione online di un sito web dedicato, che aumenterà il numero di prenotazioni dirette all’ appartamento: 200€ una tantum oppure gratuita con contratto di 1 anno.
+
+    \divider
+
+    \cvachievement{\faUsers}{Commissione operativa mensile B\&Brother}
+
+    \begin{center}
+    \cvtag{\cvevent{\textbf{ {{COMMISSIONE}}\% } }{}{}{} } \break\break
+    dell’importo NETTO pagato dagli ospiti \break\break
+    \textbf{la commissione include:}
+    \end{center}
+
+    \cvtag{Impostazione del processo di gestione e di pagamenti}
+    \cvtag{Gestione e comunicazione con gli ospiti}\\
+    \cvtag{Servizio di accoglienza ospiti (Check-in/Check-out)}
+    \cvtag{Comunicazione soggiorno ospiti alla PS}
+    \cvtag{Ritiro tassa di soggiorno (ove necessario)}
+    \cvtag{Assistenza 24/7 agli ospiti durante il soggiorno}\\
+    \cvtag{Pulizia e lavanderia (costi a carico degli ospiti)}
+    \cvtag{Piccola manutenzione (costi a carico proprietario)}
+    \cvtag{Assistenza ordinaria/straordinaria}
+    \break 
+    {\fontsize{7}{16}\selectfont viene garantita la nostra assistenza/presenza 24/7 in caso di necessità di interventi di manutenzione, e/o coordinamento tecnici/fornitori, inclusa nella commissione. }
+    
+    
+
+\end{itemize}
+
+
+
+\end{paracol}
+
+\newpage
+
+\cvsection{Conclusioni}
+
+Tenendo conto di quanto sopra, della variazione di prezzo in base alla strategia apppplicata, oltre al periodo di avviamento, e mantenendo la stima abbastanza prudente per valutare la REDDITIVITA’ MINIMA potenziale, abbiamo applicato i seguenti parametri:  
+
+                    \divider
+
+\begin{itemize}
+\item 
+Percentuale di occupazione {{AVG_OCCUPANCY}}\% (equivalente a circa {{TOTAL_DAYS}} notti/anno), ponderata sulle diverse stagionalità (come da tabella precedente e relativa nota)  
+\item 
+Tariffa stagionale della Base Ospiti stabilita in numero di \textbf{ {{POSTI_LETTO}} } ospiti (“Base Pax” in tabella)
+\end{itemize}
+
+                    \divider
+
+Si può generare un lordo mensile di circa  \cvtag{€ {{LORDO_MENSILE}}} \par
+
+    \vspace{0.5cm}  
+
+Il fatturato lordo minimo, stimato per il periodo di un anno, è di circa   \cvtag{€ {{LORDO_TOTALE}}} 
+
+    \vspace{0.5cm}  
+
+
+L'incasso netto stimato sulla base di queste informazioni, togliendo dal lordo le commissioni del portale(booking o air bnb), la commissione per la gestione del {{COMMISSIONE}}\% e le tasse da pagare con cedolare secca (direttamente da noi per suo conto) è di: \cvtag{€ {{NETTO_ESTIMATED}}}
+
+    \vspace{0.5cm}  
+
+per una media mensile di: \cvtag{€ {{NETTO_MENSILE}}}
+
+                    \divider
+
+\cvevent{Panoramica dei costi}{}{}{}
+
+\hspace*{-1em}
+\wheelchart{1.5cm}{0.5cm}{%
+  {{PERC_GESTIONE}}/13em/accent!60/Costi di gestione,
+  {{PERC_PORTALE}}/9em/accent!30/Commissione del portale,
+  {{PERC_TASSE}}/11em/accent!10/Tasse,
+  {{PERC_NETTO}}/11em/accent!90/Netto
+}
+
+                    \divider
+
+Questa relazione è valida per l’attività di Affitto Breve in tipologia Alloggio Turistico della vostra proprietà, gestita in modalità Property Management da parte di staff qualificato di B\&Brother, e prospetta al proprietario una valutazione di uscite ed entrate al netto dei costi di gestione dell’attività vera e propria: i Ricavi netti calcolati non comprendono IMU, TARI/TARSI, bollette dei consumi, quote condominiali, costi di manutenzione ordinaria e straordinaria (esclusi i costi di avviamento summenzionati),  costi di ri-approvvigionamento (olio, sale, carta igienica, lampadine fulminate, etc.) e Welcome Kit (in caso di scelta).  
+
+Questa Relazione, la cui validità è di 15 giorni, è stata redatta in data odierna e rispecchia la situazione di mercato attuale. 
+
+In attesa di vostro cortese riscontro, porgiamo cordiali saluti.  
+
+Roma, {{DATA_OGGI}}  
+
+\end{document}

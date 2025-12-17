@@ -1,6 +1,8 @@
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
-/* Non aggiungere altro per ora */
+@theme {
+  --color-bbro-element-dark: #241d16;
+  --color-bbro-element-light: #C99334;
+  --color-bbro-foreground: #4b4237;
+  --color-bbro-background: #F7F5E4;
+}

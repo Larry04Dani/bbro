@@ -47,4 +47,34 @@ model Immobile {
 
   proprietarioId  Int
   proprietario    Proprietario @relation(fields: [proprietarioId], references: [id])
+
+  // DATI PROFITTABILITÀ
+  facilities            String? // JSON string
+  tagli                 String? // JSON string
+  modificheStrutturali  String?
+  migliorieImmobiliari  String?
+  
+  // Analisi Simili
+  camereDisponibili     Int?
+  bagniAnalisi          Int?
+  posizionamento        String?
+  postiLettoTotaliAnalisi Int? // Renamed to avoid conflict if needed, or just postiLettoTotali
+  considerazioni        String?
+
+  // Parametri Gestione
+  commissione           Float?
+
+  // Previsione Stagionale
+  prezzoBassa           Float?
+  prezzoMedia           Float?
+  prezzoAlta            Float?
+  extraPax              Float?
+  
+  percBassa             Float?
+  percMedia             Float?
+  percAlta              Float?
+  
+  lordoAnnuo            Float?
+  guadagnoExtra         Float?
+  lordoTotale           Float?
 }

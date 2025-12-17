@@ -19,7 +19,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="it">
-      {/* Aggiungiamo bg-bbro-background qui per colorare l'intera pagina base */}
+      {/* QUI avviene la magia: 
+          Diciamo: "Sfondo = Panna (bbro-background)"
+          Diciamo: "Testo = Marrone (bbro-foreground)"
+      */}
       <body className="antialiased bg-bbro-background text-bbro-foreground">
         {children}
       </body>
