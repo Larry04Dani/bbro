@@ -4,11 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.87.3",
     "adm-zip": "^0.5.16",
     "form-data": "^4.0.5",
     "next": "16.0.3",
@@ -16,7 +19,6 @@
     "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "@prisma/client": "^5.22.0",
     "@tailwindcss/postcss": "^4",
     "autoprefixer": "^10.4.22",
     "dotenv": "^17.2.3",

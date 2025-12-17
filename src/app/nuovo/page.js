@@ -35,6 +35,7 @@ export default function NuovoProprietario() {
               <div className="col-span-2">
                 <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Indirizzo</label>
                 <input name="indirizzo" type="text" required className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" placeholder="Es. Via Roma 10" />
+                <p className="text-[10px] text-gray-400 mt-1">Il numero civico verrà rilevato automaticamente se presente</p>
               </div>
 
               <div className="col-span-2">

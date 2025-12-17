@@ -5,8 +5,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Proprietario {
@@ -15,7 +16,8 @@ model Proprietario {
   cognome         String
   telefono        String?
   emailPersonale  String?
-  docIdentita     String? 
+  docIdentita     String?
+  codiceFiscale   String?  // Nuovo campo
 
   // Credenziali Generate
   googleEmail     String?
@@ -31,13 +33,41 @@ model Proprietario {
   immobili        Immobile[]
   
   createdAt       DateTime @default(now())
+
+  // Documenti
+  documenti       Documento[]
+}
+
+model Documento {
+  id              Int      @id @default(autoincrement())
+  nome            String
+  fileUrl         String
+  tipo            String // 'PDF', 'IMG'
+  
+  proprietarioId  Int
+  proprietario    Proprietario @relation(fields: [proprietarioId], references: [id])
+  
+  createdAt       DateTime @default(now())
 }
 
 model Immobile {
   id              Int          @id @default(autoincrement())
+  nome            String?      // Generato automaticamente
   indirizzo       String
+  civico          String?      // Nuovo (estratto da indirizzo)
   zona            String      // Ho rinominato 'citta' in 'zona'
   
+  // Dati Catastali e Identificativi
+  CIN             String?
+  foglio          String?
+  particella      String?
+  subalterno      String?
+
+  // IDs Portali
+  idBooking       String?
+  idAirbnb        String?
+  idCiaoBooking   String?
+
   // NUOVI CAMPI (Opzionali per ora)
   metriQuadri     Int?
   postiLetto      Int?

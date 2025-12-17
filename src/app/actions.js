@@ -8,8 +8,46 @@ export async function creaProprietario(formData) {
   const cognome = formData.get('cognome');
 
   // Dati Immobile
-  const indirizzo = formData.get('indirizzo');
+  // Dati Immobile
+  const indirizzoRaw = formData.get('indirizzo');
   const zona = formData.get('zona'); // Prima era citta
+
+  // Logica estrazione Civico
+  let indirizzo = indirizzoRaw;
+  let civico = null;
+  // Regex: Cerca un numero (ev. con lettere/barre) alla fine della stringa
+  // Es: "Via Roma 10", "Via Roma, 10A", "Piazza 5 Maggio 12/b"
+  const civicoMatch = indirizzoRaw.match(/^(.*?)[,\s]+(\d+[a-zA-Z]?(?:\/[a-zA-Z0-9]+)?)$/);
+
+  if (civicoMatch) {
+    indirizzo = civicoMatch[1].trim(); // "Via Roma"
+    civico = civicoMatch[2];           // "10"
+  }
+
+  // Logica Generazione Nome Immobile: "P" + PRIME 3 LETTERE (escluse Via, Viale...) in upper case
+  const prefixToRemove = ["via", "viale", "largo", "vicolo", "piazza", "piazzale", "corso", "contrada", "salita", "discesa", "calle", "fondamenta", "strada"];
+  let words = indirizzo.toLowerCase().split(/\s+/);
+
+  // Remove prefix if matches known prefixes
+  if (words.length > 0 && prefixToRemove.includes(words[0])) {
+    words.shift();
+  }
+
+  // Find first "significant" word (skip "P.", "S.", single letters)
+  let mainWord = words.length > 0 ? words[0] : "UNK";
+
+  for (const w of words) {
+    // Skip words ending with '.' (initials) or single letters
+    if (w.includes('.') || w.length < 2) {
+      continue;
+    }
+    mainWord = w;
+    break;
+  }
+
+  // Extract first 3 chars
+  const shortCode = mainWord.substring(0, 3).toUpperCase();
+  const nomeGenerato = `P${shortCode}`;
 
   // Convertiamo i numeri (perché dal form arrivano come testo "100")
   // Se il campo è vuoto, salviamo null
@@ -21,7 +59,7 @@ export async function creaProprietario(formData) {
 
   // --- LOGICA GENERAZIONE ---
   const nomeClean = nome.toLowerCase().trim();
-  const indirizzoNoSpazi = indirizzo.replace(/\s+/g, '');
+  const indirizzoNoSpazi = indirizzoRaw.replace(/\s+/g, ''); // Usa raw per univocità
 
   const passwordGenerata = `${indirizzoNoSpazi}!`;
   const usernameGenerato = `${nomeClean}.${indirizzoNoSpazi}`;
@@ -32,6 +70,7 @@ export async function creaProprietario(formData) {
     data: {
       nome,
       cognome,
+      codiceFiscale: formData.get('codiceFiscale'), // Nuovo campo
       googleEmail: emailGoogleGenerata,
       googlePass: passwordGenerata,
       bookingUser: usernameGenerato,
@@ -43,8 +82,15 @@ export async function creaProprietario(formData) {
 
       immobili: {
         create: {
+          nome: nomeGenerato,   // Nuovo generato
           indirizzo: indirizzo,
+          civico: civico,       // Nuovo estratto
           zona: zona,           // Aggiornato
+          // Dati Catastali & CIN (se presenti nel form creazione)
+          CIN: formData.get('CIN'),
+          foglio: formData.get('foglio'),
+          particella: formData.get('particella'),
+          subalterno: formData.get('subalterno'),
           metriQuadri: mq,      // Nuovo
           postiLetto: posti,    // Nuovo
           postiLettoExtra: postiExtra, // Nuovo
@@ -67,10 +113,19 @@ export async function aggiornaProprietario(formData) {
     data: {
       nome: formData.get('nome'),
       cognome: formData.get('cognome'),
+      codiceFiscale: formData.get('codiceFiscale'),
       telefono: formData.get('telefono'),
       emailPersonale: formData.get('emailPersonale'),
-      // Qui potresti aggiungere anche la logica per rigenerare le password se cambiano indirizzo, 
-      // ma per ora teniamo solo i dati anagrafici semplici.
+
+      // Credenziali
+      googleEmail: formData.get('googleEmail'),
+      googlePass: formData.get('googlePass'),
+      bookingUser: formData.get('bookingUser'),
+      bookingPass: formData.get('bookingPass'),
+      airbnbUser: formData.get('airbnbUser'),
+      airbnbPass: formData.get('airbnbPass'),
+      ciaoBookingUser: formData.get('ciaoBookingUser'),
+      ciaoBookingPass: formData.get('ciaoBookingPass'),
     }
   });
 
@@ -85,8 +140,18 @@ export async function aggiornaImmobile(formData) {
   await prisma.immobile.update({
     where: { id: id },
     data: {
+      nome: formData.get('nome'), // Aggiornabile
       indirizzo: formData.get('indirizzo'),
+      civico: formData.get('civico'), // Aggiornamento esplicito se c'è campo separato
       zona: formData.get('zona'),
+      CIN: formData.get('CIN'),
+      foglio: formData.get('foglio'),
+      particella: formData.get('particella'),
+      subalterno: formData.get('subalterno'),
+      // ID Portali
+      idBooking: formData.get('idBooking'),
+      idAirbnb: formData.get('idAirbnb'),
+      idCiaoBooking: formData.get('idCiaoBooking'),
       metriQuadri: parseInt(formData.get('metriQuadri')) || null,
       bagni: parseInt(formData.get('bagni')) || null,
       camere: parseInt(formData.get('camere')) || null,
@@ -96,6 +161,68 @@ export async function aggiornaImmobile(formData) {
   });
 
   // Dopo aver salvato la casa, torniamo alla pagina del proprietario
+  redirect(`/proprietari/${proprietarioId}`);
+}
+
+// AZIONE: Aggiungi Immobile a Proprietario Esistente
+export async function aggiungiImmobile(formData) {
+  const proprietarioId = parseInt(formData.get('proprietarioId'));
+  const indirizzoRaw = formData.get('indirizzo');
+  const zona = formData.get('zona');
+
+  // Logica estrazione Civico (Replicata)
+  let indirizzo = indirizzoRaw;
+  let civico = null;
+  const civicoMatch = indirizzoRaw.match(/^(.*?)[,\s]+(\d+[a-zA-Z]?(?:\/[a-zA-Z0-9]+)?)$/);
+
+  if (civicoMatch) {
+    indirizzo = civicoMatch[1].trim();
+    civico = civicoMatch[2];
+  }
+
+  // Logica Generazione Nome Immobile (Replicata)
+  const prefixToRemove = ["via", "viale", "largo", "vicolo", "piazza", "piazzale", "corso", "contrada", "salita", "discesa", "calle", "fondamenta", "strada"];
+  let words = indirizzo.toLowerCase().split(/\s+/);
+
+  if (words.length > 0 && prefixToRemove.includes(words[0])) {
+    words.shift();
+  }
+
+  // Find first "significant" word (skip "P.", "S.", single letters)
+  let mainWord = words.length > 0 ? words[0] : "UNK";
+  for (const w of words) {
+    if (w.includes('.') || w.length < 2) {
+      continue;
+    }
+    mainWord = w;
+    break;
+  }
+
+  const shortCode = mainWord.substring(0, 3).toUpperCase();
+  const nomeGenerato = `P${shortCode}`;
+
+  // Conversione Numeri
+  const mq = formData.get('metriQuadri') ? parseInt(formData.get('metriQuadri')) : null;
+  const posti = formData.get('postiLetto') ? parseInt(formData.get('postiLetto')) : null;
+  const postiExtra = formData.get('postiLettoExtra') ? parseInt(formData.get('postiLettoExtra')) : null;
+  const camere = formData.get('camere') ? parseInt(formData.get('camere')) : null;
+  const bagni = formData.get('bagni') ? parseInt(formData.get('bagni')) : null;
+
+  await prisma.immobile.create({
+    data: {
+      nome: nomeGenerato,
+      indirizzo: indirizzo,
+      civico: civico,
+      zona: zona,
+      proprietarioId: proprietarioId,
+      metriQuadri: mq,
+      postiLetto: posti,
+      postiLettoExtra: postiExtra,
+      camere: camere,
+      bagni: bagni
+    }
+  });
+
   redirect(`/proprietari/${proprietarioId}`);
 }
 
@@ -141,5 +268,85 @@ export async function salvaProfittabilita(data) {
   });
 
   // Non facciamo redirect, rimaniamo sulla pagina
+  return { success: true };
+}
+
+// AZIONE: Upload Documento (SUPABASE)
+import { createClient } from '@supabase/supabase-js';
+import { revalidatePath } from 'next/cache';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export async function uploadDocumento(formData) {
+  const proprietarioId = parseInt(formData.get('proprietarioId'));
+  const file = formData.get('file');
+
+  if (!file || !proprietarioId) throw new Error("File o ID mancante");
+
+  const nomeOriginale = file.name;
+  const isPdf = nomeOriginale.toLowerCase().endsWith('.pdf');
+  const tipo = isPdf ? 'PDF' : 'IMG';
+
+  // Sanitizza nome (rimuovi caratteri speciali/accenti che rompono S3)
+  const safeName = nomeOriginale.replace(/[^a-zA-Z0-9.-]/g, '_');
+
+  // Genera nome univoco
+  const uniqueName = `${proprietarioId}/${Date.now()}-${safeName}`;
+
+  // Upload su Supabase Storage (Bucket Privato)
+  console.log("Tentativo upload su bucket 'documenti':", uniqueName);
+  const { data, error } = await supabase
+    .storage
+    .from('documenti')
+    .upload(uniqueName, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
+
+  if (error) {
+    console.error("Errore DETTAGLIATO Upload Supabase:", JSON.stringify(error, null, 2));
+    throw new Error(`Errore Upload: ${error.message} (Code: ${error.statusCode})`);
+  }
+  console.log("Upload riuscito:", data);
+
+  // Salvataggio DB
+  // NOTA: Per i bucket privati, salviamo il PERCORSO (path) nel campo fileUrl.
+  // L'URL firmato verrà generato al momento della visualizzazione.
+  await prisma.documento.create({
+    data: {
+      nome: nomeOriginale,
+      fileUrl: uniqueName, // Salviamo il path relativo
+      tipo: tipo,
+      proprietarioId: proprietarioId
+    }
+  });
+
+  revalidatePath(`/proprietari/${proprietarioId}`);
+  return { success: true };
+}
+
+// AZIONE: Elimina Documento (SUPABASE)
+export async function eliminaDocumento(formData) {
+  const id = parseInt(formData.get('id'));
+  const proprietarioId = parseInt(formData.get('proprietarioId'));
+
+  const doc = await prisma.documento.findUnique({ where: { id: id } });
+
+  if (!doc) throw new Error("Documento non trovato");
+
+  // Elimina da Supabase (doc.fileUrl è il path)
+  const { error } = await supabase
+    .storage
+    .from('documenti')
+    .remove([doc.fileUrl]);
+
+  if (error) console.error("Errore cancellazione Supabase:", error);
+
+  // Elimina DB
+  await prisma.documento.delete({ where: { id: id } });
+
+  revalidatePath(`/proprietari/${proprietarioId}`);
   return { success: true };
 }

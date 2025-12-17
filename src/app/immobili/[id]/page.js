@@ -41,14 +41,59 @@ export default async function DettaglioImmobile({ params }) {
                         <input type="hidden" name="proprietarioId" value={casa.proprietarioId} />
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="col-span-2">
-                                <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Indirizzo</label>
-                                <input name="indirizzo" defaultValue={casa.indirizzo} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" />
+                            <div className="col-span-2 grid grid-cols-4 gap-4">
+                                <div className="col-span-3">
+                                    <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Nome Immobile</label>
+                                    <input name="nome" defaultValue={casa.nome || ''} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" />
+                                </div>
+                                <div className="col-span-3">
+                                    <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Indirizzo</label>
+                                    <input name="indirizzo" defaultValue={casa.indirizzo} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" />
+                                </div>
+                                <div className="col-span-1">
+                                    <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Civico</label>
+                                    <input name="civico" defaultValue={casa.civico || ''} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" />
+                                </div>
                             </div>
 
                             <div className="col-span-2">
                                 <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Zona</label>
                                 <input name="zona" defaultValue={casa.zona} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" />
+                            </div>
+
+                            {/* DATI CATASTALI & CIN */}
+                            <div className="col-span-2 mt-2 bg-bbro-background/30 p-4 rounded-sm border border-bbro-foreground/10">
+                                <h3 className="text-xs font-bold text-bbro-element-light uppercase tracking-widest mb-3">Dati Catastali & CIN</h3>
+
+                                <div className="grid grid-cols-3 gap-2 mb-3">
+                                    <input name="foglio" defaultValue={casa.foglio || ''} className="p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark text-sm" placeholder="Foglio" />
+                                    <input name="particella" defaultValue={casa.particella || ''} className="p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark text-sm" placeholder="Particella" />
+                                    <input name="subalterno" defaultValue={casa.subalterno || ''} className="p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark text-sm" placeholder="Sub" />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">CIN</label>
+                                    <input name="CIN" defaultValue={casa.CIN || ''} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark uppercase" placeholder="Codice Identificativo Nazionale" />
+                                </div>
+                            </div>
+
+                            {/* ID PORTALI */}
+                            <div className="col-span-2 mt-2 bg-bbro-background/30 p-4 rounded-sm border border-bbro-foreground/10">
+                                <h3 className="text-xs font-bold text-bbro-element-light uppercase tracking-widest mb-3">ID Portali</h3>
+                                <div className="space-y-3">
+                                    <div>
+                                        <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">ID Booking</label>
+                                        <input name="idBooking" defaultValue={casa.idBooking || ''} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" placeholder="Es. 123456" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">ID Airbnb</label>
+                                        <input name="idAirbnb" defaultValue={casa.idAirbnb || ''} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" placeholder="Es. 1234567890" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">ID CiaoBooking</label>
+                                        <input name="idCiaoBooking" defaultValue={casa.idCiaoBooking || ''} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark" placeholder="Es. 123" />
+                                    </div>
+                                </div>
                             </div>
 
                             <div>

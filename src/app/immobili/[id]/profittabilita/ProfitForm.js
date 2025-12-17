@@ -32,6 +32,7 @@ export default function ProfitForm({ casa }) {
     const [prezzoMedia, setPrezzoMedia] = useState(casa.prezzoMedia || '');
     const [prezzoAlta, setPrezzoAlta] = useState(casa.prezzoAlta || '');
     const [extraPax, setExtraPax] = useState(casa.extraPax || '');
+    const [numExtraPax, setNumExtraPax] = useState(casa.postiLettoExtra || 0);
 
     // State for occupancy percentages
     const [percBassa, setPercBassa] = useState(casa.percBassa || 63.4);
@@ -83,7 +84,7 @@ export default function ProfitForm({ casa }) {
     };
 
     // Calculate Lordo Annuo and Guadagno Extra whenever prices or percentages change
-    const calculateTotals = (bassa, media, alta, extra, pBassa, pMedia, pAlta) => {
+    const calculateTotals = (bassa, media, alta, extra, numExtra, pBassa, pMedia, pAlta) => {
         const priceBassa = parseFloat(bassa) || 0;
         const priceMedia = parseFloat(media) || 0;
         const priceAlta = parseFloat(alta) || 0;
@@ -101,7 +102,8 @@ export default function ProfitForm({ casa }) {
         const totalLordo = (priceBassa * daysBassa) + (priceMedia * daysMedia) + (priceAlta * daysAlta);
         setLordoAnnuo(totalLordo.toFixed(2));
 
-        const totalExtra = priceExtra * totalDays * INCIDENZA_EXTRA;
+        const parsedNumExtra = parseFloat(numExtra) || 0;
+        const totalExtra = priceExtra * parsedNumExtra * totalDays * INCIDENZA_EXTRA;
         setGuadagnoExtra(totalExtra.toFixed(2));
 
         const grandTotal = totalLordo + totalExtra;
@@ -116,12 +118,13 @@ export default function ProfitForm({ casa }) {
         const currentMedia = type === 'media' ? value : prezzoMedia;
         const currentAlta = type === 'alta' ? value : prezzoAlta;
         const currentExtra = type === 'extra' ? value : extraPax;
+        const currentNumExtra = type === 'numExtra' ? value : numExtraPax;
 
         const currentPercBassa = type === 'percBassa' ? value : percBassa;
         const currentPercMedia = type === 'percMedia' ? value : percMedia;
         const currentPercAlta = type === 'percAlta' ? value : percAlta;
 
-        calculateTotals(currentBassa, currentMedia, currentAlta, currentExtra, currentPercBassa, currentPercMedia, currentPercAlta);
+        calculateTotals(currentBassa, currentMedia, currentAlta, currentExtra, currentNumExtra, currentPercBassa, currentPercMedia, currentPercAlta);
     };
 
     const handleLordoChange = (value) => {
@@ -266,10 +269,19 @@ export default function ProfitForm({ casa }) {
         // Netto: Remainder
         const percNetto = 100 - percPortale - percGestione - percTasse;
 
+        // Helper per formattazione italiana: "1.234,56"
+        const formatIta = (val) => {
+            const num = parseFloat(val);
+            if (isNaN(num)) return '';
+            // toLocaleString('it-IT') usa i punti per le migliaia e la virgola per i decimali
+            return num.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
+
         const data = {
             NOME: getVal('nome'),
             COGNOME: getVal('cognome'),
-            INDIRIZZO: getVal('indirizzo'),
+            // Se c'è il civico, lo aggiungiamo dopo l'indirizzo
+            INDIRIZZO: casa.civico ? `${getVal('indirizzo')}, ${casa.civico}` : getVal('indirizzo'),
             ZONA: getVal('zona'),
             METRI_QUADRI: getVal('metriQuadri'),
             BAGNI: getVal('bagni'),
@@ -309,16 +321,21 @@ ${tagliItems.filter(i => i.valore && i.valore.trim() !== '').map(i => `\\item ${
             TOTAL_DAYS: totalDays,
             AVG_OCCUPANCY: avgOccupancy,
 
-            LORDO_ANNUO: lordoAnnuo,
-            GUADAGNO_EXTRA: guadagnoExtra,
-            LORDO_TOTALE: lordoTotale,
-            LORDO_MENSILE: lordoMensile.toFixed(2),
+            // Formattazione Italiana sui totali (Conclusioni)
+            LORDO_ANNUO: formatIta(lordoAnnuo),
+            GUADAGNO_EXTRA: formatIta(guadagnoExtra),
+            LORDO_TOTALE: formatIta(lordoTotale),
+            LORDO_MENSILE: formatIta(lordoMensile),
 
             COMMISSIONE: commissionePerc,
-            NETTO_ESTIMATED: nettoEstimated.toFixed(2),
-            NETTO_MENSILE: nettoMensile.toFixed(2),
+            NETTO_ESTIMATED: formatIta(nettoEstimated),
+            NETTO_MENSILE: formatIta(nettoMensile),
 
-            // Wheelchart Data
+            // Wheelchart Data (rimangono numeri o stringhe semplici per il grafico interno al tex se gestito così, 
+            // ma se sono solo visualizzati, meglio formato standard. Solitamente qui servono solo i numeri raw per i grafici?
+            // Il template Tex potrebbe usarli per disegnare. Se è solo testo va bene formattato.
+            // Controllo il codice originale: erano .toFixed(1). Probabilmente servono per macro di grafici.
+            // Lascio .toFixed(1) per le percentuali del grafico per sicurezza, modifico solo i valori monetari "Conclusioni" come richiesto.
             PERC_PORTALE: percPortale.toFixed(1),
             PERC_GESTIONE: percGestione.toFixed(1),
             PERC_TASSE: percTasse.toFixed(1),
@@ -413,7 +430,7 @@ ${tagliItems.filter(i => i.valore && i.valore.trim() !== '').map(i => `\\item ${
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-bbro-foreground uppercase tracking-wide mb-1">Posti Extra</label>
-                            <input name="postiLettoExtra" type="number" defaultValue={casa.postiLettoExtra} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark bg-white" />
+                            <input name="postiLettoExtra" type="number" value={numExtraPax} onChange={(e) => handleInputChange(setNumExtraPax, e.target.value, 'numExtra')} className="w-full p-2 border border-bbro-foreground/20 rounded-sm focus:border-bbro-element-light focus:outline-none text-bbro-element-dark bg-white" />
                         </div>
                     </div>
                 </div>
