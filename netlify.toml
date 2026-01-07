@@ -1,7 +1,4 @@
 [build]
   command = "npx prisma generate && npm run build"
-<<<<<<< HEAD
+  
   publish = ".next"
-=======
-  publish = ".next"
->>>>>>> 912d15cc6f204bd05e6ed9d6db8ee4a3d2b02e7a
