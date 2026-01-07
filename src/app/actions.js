@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/db';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 export async function creaProprietario(formData) {
   const nome = formData.get('nome');
@@ -101,6 +102,9 @@ export async function creaProprietario(formData) {
     }
   });
 
+
+
+  revalidatePath('/');
   redirect('/');
 }
 
@@ -274,7 +278,7 @@ export async function salvaProfittabilita(data) {
 
 // AZIONE: Upload Documento (SUPABASE)
 import { createClient } from '@supabase/supabase-js';
-import { revalidatePath } from 'next/cache';
+
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
