@@ -332,6 +332,21 @@ export async function uploadDocumento(formData) {
   return { success: true };
 }
 
+// AZIONE: Elimina Immobile
+export async function eliminaImmobile(formData) {
+  const id = parseInt(formData.get('id'));
+  const proprietarioId = parseInt(formData.get('proprietarioId'));
+
+  if (!id) throw new Error("ID Immobile mancante");
+
+  await prisma.immobile.delete({
+    where: { id: id }
+  });
+
+  revalidatePath(`/proprietari/${proprietarioId}`);
+  redirect(`/proprietari/${proprietarioId}`);
+}
+
 // AZIONE: Elimina Documento (SUPABASE)
 export async function eliminaDocumento(formData) {
   const id = parseInt(formData.get('id'));
@@ -354,4 +369,42 @@ export async function eliminaDocumento(formData) {
 
   revalidatePath(`/proprietari/${proprietarioId}`);
   return { success: true };
+}
+
+// AZIONE: Elimina Proprietario (con Clean Up File e Immobili)
+export async function eliminaProprietario(formData) {
+  const id = parseInt(formData.get('id'));
+
+  if (!id) throw new Error("ID Proprietario mancante");
+
+  // 1. Recupera Documenti per eliminare file da Storage
+  const docs = await prisma.documento.findMany({
+    where: { proprietarioId: id }
+  });
+
+  if (docs.length > 0) {
+    const paths = docs.map(d => d.fileUrl);
+    // Elimina file da Supabase Storage
+    const { error } = await supabase.storage.from('documenti').remove(paths);
+    if (error) console.error("Errore eliminazione file Supabase:", error);
+  }
+
+  // 2. Elimina Record Database (Ordine inverso per vincoli FK)
+  // Elimina Documenti DB
+  await prisma.documento.deleteMany({
+    where: { proprietarioId: id }
+  });
+
+  // Elimina Immobili
+  await prisma.immobile.deleteMany({
+    where: { proprietarioId: id }
+  });
+
+  // Elimina Proprietario
+  await prisma.proprietario.delete({
+    where: { id: id }
+  });
+
+  // Redirect alla home
+  redirect('/');
 }

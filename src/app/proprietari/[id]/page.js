@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { aggiornaProprietario, uploadDocumento, eliminaDocumento } from '@/app/actions';
 import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
+import DeleteOwnerButton from '@/components/DeleteOwnerButton';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -39,7 +40,10 @@ export default async function DettaglioProprietario({ params }) {
 
   return (
     <main className="min-h-screen bg-bbro-background p-10">
-      <Link href="/" className="text-bbro-element-light hover:text-bbro-element-dark text-sm font-bold tracking-wide mb-4 inline-block">← TORNA ALLA DASHBOARD</Link>
+      <div className="flex justify-between items-center mb-4">
+        <Link href="/" className="text-bbro-element-light hover:text-bbro-element-dark text-sm font-bold tracking-wide inline-block">← TORNA ALLA DASHBOARD</Link>
+        <DeleteOwnerButton id={p.id} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 

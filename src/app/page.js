@@ -6,7 +6,19 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const proprietari = await prisma.proprietario.findMany({
-    include: { immobili: true },
+    select: {
+      id: true,
+      nome: true,
+      cognome: true,
+      stato: true,
+      immobili: {
+        select: {
+          id: true,
+          indirizzo: true,
+          zona: true
+        }
+      }
+    },
     orderBy: { createdAt: 'desc' }
   });
 

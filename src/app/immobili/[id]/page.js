@@ -1,7 +1,7 @@
 // src/app/immobili/[id]/page.js
 import prisma from '@/lib/db';
 import Link from 'next/link';
-import { aggiornaImmobile } from '@/app/actions';
+import { aggiornaImmobile, eliminaImmobile } from '@/app/actions';
 
 export default async function DettaglioImmobile({ params }) {
     // --- CORREZIONE QUI SOTTO ---
@@ -128,6 +128,27 @@ export default async function DettaglioImmobile({ params }) {
                     </form>
 
                 </div>
+
+                <div className="mt-8 border-t border-bbro-foreground/10 pt-8">
+                    <form action={eliminaImmobile}>
+                        <input type="hidden" name="id" value={casa.id} />
+                        <input type="hidden" name="proprietarioId" value={casa.proprietarioId} />
+
+                        <div className="bg-red-50 p-4 rounded-sm border border-red-100 flex justify-between items-center">
+                            <div>
+                                <h4 className="text-red-800 font-bold text-sm">Zona Pericolo</h4>
+                                <p className="text-red-600 text-xs mt-1">L'eliminazione è irreversibile.</p>
+                            </div>
+                            <button
+                                type="submit"
+                                className="bg-white border border-red-200 text-red-600 px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-red-600 hover:text-white transition"
+                            >
+                                Elimina Immobile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
             </div>
         </main>
     );
